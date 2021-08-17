@@ -1,10 +1,50 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import toast, { Toaster } from 'react-hot-toast';
 import ContactForm from 'components/ContactForm';
 import Filter from 'components/Filter';
 import ContactsList from 'components/ContactsList';
 import styles from 'App.module.css';
+import * as actions from './redux/actions';
+
+
+//=== redux ===//
+
+// function AppRedux() {
+  // return (
+  //   <div className={styles.container}>
+  //     <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
+  //     <h1>Phonebook</h1>
+  //     <ContactForm onSubmit={addContact} />
+  //     <h2>Contacts</h2>
+  //     <Filter
+  //       id={filterInputId}
+  //       value={filter}
+  //       onChange={changeFilter}
+  //     />
+  //     <ContactsList
+  //       contacts={getFilteredContacts()}
+  //       onDeleteContact={deleteContact}
+  //     />
+  //   </div>
+  // ); 
+// }
+
+const mapStateToProps = state => {
+  return {
+    contacts: state.contacts,
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onAdd: () => dispatch(actions.addContact()),
+    onDelete: () => dispatch(actions.deleteContact()),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppRedux);
 
 export default function App() {
   const [contacts, setContacts] = useState(() => {

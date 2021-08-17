@@ -1,6 +1,9 @@
-export const myAction = (value) => {
-    return {
-        type: 'MY_ACTION',
-        payload: value,
-    };
-};
+export const addContact = (name) => ({
+    type: 'contacts/Add',
+    payload: name,
+});
+
+export const deleteContact = (contactId) => ({
+    type: 'contacts/Delete',
+    payload: contactId,
+});
