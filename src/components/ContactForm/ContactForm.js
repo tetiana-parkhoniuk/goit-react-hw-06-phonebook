@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
+import toast, { Toaster } from 'react-hot-toast';
 import styles from 'components/ContactForm/ContactForm.module.css';
+import { connect } from 'react-redux';
+import contactsActions from 'redux/contacts/contacts-actions';
 
-export default function ContactForm({onSubmit}) {
+function ContactForm({contacts, onAdd}) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -22,7 +25,20 @@ export default function ContactForm({onSubmit}) {
   
   const handleSubmit = event => {
     event.preventDefault();
-    onSubmit(name, number);
+    
+    if (
+      contacts.find(
+        contact => contact.name.toLowerCase() === name.toLowerCase(),
+      )) {
+      toast.error(`${name} is already in contacts.`);
+    }
+    else if (name.trim() === '' || number.trim() === '') {
+      toast.error('Please enter at least some data');
+    }
+    else {
+      onAdd(name, number);
+    }
+    
     resetForm();
   };
   
@@ -32,6 +48,8 @@ export default function ContactForm({onSubmit}) {
   };
 
   return (
+    <>
+      <Toaster position="top-right" toastOptions={{ duration: 2000 }} />
       <form className={styles.form} onSubmit={handleSubmit}>
         <label className={styles.formLabel} htmlFor={nameInputId}>
           Name
@@ -61,11 +79,26 @@ export default function ContactForm({onSubmit}) {
           Add contact
         </button>
       </form>
-    );
+    </>
+  );
+}
+const mapStateToProps = state => {
+  return {
+    contacts: state.contacts.items,
+  }
 }
 
+const mapDispatchToProps = dispatch => {
+  return {
+    onAdd: (name, number) => dispatch(contactsActions.addContact(name, number)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
+
+
 ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
 };
 
 
