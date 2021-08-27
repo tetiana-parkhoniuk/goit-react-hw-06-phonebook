@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import toast, { Toaster } from 'react-hot-toast';
 import styles from 'components/ContactForm/ContactForm.module.css';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import contactsActions from 'redux/contacts/contacts-actions';
+import { getContacts } from 'redux/contacts/contacts-selectors';
 
-function ContactForm({contacts, onAdd}) {
+export default function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
+  const contacts = useSelector(getContacts);
+  const dispatch = useDispatch();
 
   const nameInputId = uuidv4();
   const numberInputId = uuidv4();
+
+  const onAdd = (name, number) => dispatch(contactsActions.addContact(name, number));
 
   const handleNameChange = event => {
     const { value } = event.currentTarget;
@@ -81,93 +85,4 @@ function ContactForm({contacts, onAdd}) {
       </form>
     </>
   );
-}
-const mapStateToProps = state => {
-  return {
-    contacts: state.contacts.items,
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    onAdd: (name, number) => dispatch(contactsActions.addContact(name, number)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
-
-
-ContactForm.propTypes = {
-  onAdd: PropTypes.func.isRequired,
 };
-
-
-////==== Original Code ====////
-
-// export default class ContactForm extends Component {
-//   state = {
-//     name: '',
-//     number: '',
-//   };
-
-//   nameInputId = uuidv4();
-//   numberInputId = uuidv4();
-
-//   handleInputChange = event => {
-//     const { name, value } = event.currentTarget;
-//     this.setState({
-//       [name]: value,
-//     });
-//   };
-
-//   handleSubmit = event => {
-//     event.preventDefault();
-
-//     this.props.onSubmit(this.state);
-
-//     this.resetForm();
-//   };
-
-//   resetForm = () => {
-//     this.setState({
-//       name: '',
-//       number: '',
-//     });
-//   };
-
-//   render() {
-//     return (
-//       <form className={styles.form} onSubmit={this.handleSubmit}>
-//         <label className={styles.formLabel} htmlFor={this.nameInputId}>
-//           Name
-//         </label>
-//         <input
-//           type="text"
-//           name="name"
-//           id={this.nameInputId}
-//           value={this.state.name}
-//           className={styles.formInput}
-//           onChange={this.handleInputChange}
-//         />
-
-//         <label className={styles.formLabel} htmlFor={this.nameInputId}>
-//           Number
-//         </label>
-//         <input
-//           type="text"
-//           name="number"
-//           id={this.numberInputId}
-//           value={this.state.number}
-//           className={styles.formInput}
-//           onChange={this.handleInputChange}
-//         />
-
-//         <button type="submit" className={styles.submitBtn}>
-//           Add contact
-//         </button>
-//       </form>
-//     );
-//   }
-// }
-
-

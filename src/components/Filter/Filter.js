@@ -1,11 +1,17 @@
 import { v4 as uuidv4 } from 'uuid';
-import PropTypes from 'prop-types';
 import styles from 'components/Filter/Filter.module.css';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import contactsActions from 'redux/contacts/contacts-actions';
+import { getFilter } from '../../redux/contacts/contacts-selectors';
 
 
-function Filter({ id, value, onChange }) {
+export default function Filter() {
+  const id = uuidv4();
+  const value = useSelector(getFilter);
+  const dispatch = useDispatch();
+
+  const onChange = (event) => dispatch(contactsActions.changeFilter(event.target.value));
+
   return (
     <div className={styles.filterContainer}>
       <label className={styles.label} htmlFor={id}>
@@ -20,24 +26,4 @@ function Filter({ id, value, onChange }) {
       />
     </div>
   );
-}
-
-const filterInputId = uuidv4();
-
-const mapStateToProps = (state) => ({
-  value: state.contacts.filter,
-  id: filterInputId,
-})
-
-const mapDispatchToProps = dispatch => ({
-  onChange: (event) => dispatch(contactsActions.changeFilter(event.target.value))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(Filter);
-
-
-Filter.propTypes = {
-  id: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
 };
